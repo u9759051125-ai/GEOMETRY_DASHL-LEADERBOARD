@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Geometry Dash - Ultimate HD List Hub</title>
+    <style>
+        :root {
+            --bg-color: #0b0c10;
+            --card-bg: #151820;
+            --accent-color: #00f0ff;
+            --accent-ill: #ff2a5f;
+            --text-color: #ffffff;
+            --text-muted: #8c92a4;
+            --border-color: #232733;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); padding: 20px; }
+
+        header {
+            text-align: center;
+            padding: 25px 0;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 25px;
+        }
+        header h1 { font-size: 2.4rem; color: var(--accent-color); text-transform: uppercase; letter-spacing: 3px; }
+
+        nav {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        nav button {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        nav button:hover, nav button.active {
+            background-color: var(--accent-color);
+            color: #000;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.4);
+        }
+
+        .list-container { display: none; max-width: 950px; margin: 0 auto; }
+        .list-container.active { display: block; }
+
+        .section-title {
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+            border-left: 5px solid var(--accent-color);
+            padding-left: 12px;
+        }
+        .ill-title { border-left-color: var(--accent-ill); }
+
+        .demon-card {
+            display: flex;
+            align-items: center;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+        .demon-card:hover {
+            border-color: var(--accent-color);
+            transform: translateX(4px);
+        }
+
+        .rank {
+            font-size: 1.3rem;
+            font-weight: bold;
+            width: 85px;
+            text-align: center;
+            color: var(--accent-color);
+            flex-shrink: 0;
+        }
+        .ill-rank { color: var(--accent-ill); }
+
+        /* Miniature in stile livello GD reale (senza strisce da cantiere) */
+        .level-thumbnail {
+            width: 170px;
+            height: 95px;
+            border-right: 1px solid var(--border-color);
+            flex-shrink: 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        
+        /* Stili visivi dedicati alle miniature dei livelli */
+        .thumb-society { background: radial-gradient(circle, #00f0ff 0%, #051923 80%); box-shadow: inset 0 0 20px rgba(0,240,255,0.5); }
+        .thumb-thinking { background: radial-gradient(circle, #7b2cbf 0%, #10002b 80%); box-shadow: inset 0 0 20px rgba(123,44,191,0.5); }
+        .thumb-amethyst { background: radial-gradient(circle, #48cae4 0%, #03045e 80%); box-shadow: inset 0 0 20px rgba(72,202,228,0.5); }
+        .thumb-flamewall { background: radial-gradient(circle, #ff3366 0%, #3a0ca3 80%); box-shadow: inset 0 0 20px rgba(255,51,102,0.5); }
+        .thumb-tidal { background: radial-gradient(circle, #00b4d8 0%, #03045e 80%); box-shadow: inset 0 0 20px rgba(0,180,216,0.6); }
+        .thumb-dark { background: radial-gradient(circle, #212529 0%, #000000 80%); border: 1px solid #343a40; }
+        .thumb-yellow { background: radial-gradient(circle, #ffb703 0%, #370617 80%); box-shadow: inset 0 0 20px rgba(255,183,3,0.5); }
+        .thumb-ill { background: radial-gradient(circle, #d90429 0%, #2b0d0f 80%); box-shadow: inset 0 0 25px rgba(217,4,41,0.7); }
+
+        /* Icona centrale stilizzata per simulare l'anteprima del livello */
+        .level-icon-badge {
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(255,255,255,0.8);
+            border-radius: 8px;
+            background: rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        .demon-info { padding: 12px 18px; flex-grow: 1; }
+        .demon-info h3 { font-size: 1.25rem; margin-bottom: 4px; }
+        .demon-info p { color: var(--text-muted); font-size: 0.9rem; }
+
+        .player-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            padding: 15px 22px;
+            border-radius: 10px;
+            margin-bottom: 12px;
+        }
+        .player-left { display: flex; align-items: center; gap: 18px; }
+        .player-avatar-box {
+            width: 45px; height: 45px; border-radius: 50%;
+            background-color: #1f2330; display: flex; align-items: center; justify-content: center;
+            font-weight: bold; color: var(--accent-color); border: 1px solid var(--accent-color);
+            flex-shrink: 0; font-size: 0.95rem;
+        }
+        .player-points { font-weight: bold; color: var(--accent-color); font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Hub Geometry Dash HD</h1>
+    </header>
+
+    <nav>
+        <button onclick="showTab('demon-list')" class="active">Lista dei demoni (1-50)</button>
+        <button onclick="showTab('ill-list')">ILL (1-50)</button>
+        <button onclick="showTab('player-list')">Elenco giocatori (1-50)</button>
+    </nav>
+
+    <!-- 1. DEMON LIST (TOP 50) -->
+    <div id="demon-list" class="list-container active">
+        <h2 class="section-title">Lista dei demoni di Pointercrate (Top 50)</h2>
+        <script>
+            const demons = [
+                { r: 1, name: "Società", pub: "Neomarbilan", v: "wPopoff", thumb: "thumb-society", icon: "💎" },
+                { r: 2, name: "Spazio di pensiero II", pub: "CairoX", v: "Zoink", thumb: "thumb-thinking", icon: "🧠" },
+                { r: 3, name: "Ametista", pub: "iMist", v: "wPopoff", thumb: "thumb-amethyst", icon: "🔮" },
+                { r: 4, name: "Muro di fuoco", pub: "Narwall", v: "Cuatrocientos", thumb: "thumb-flamewall", icon: "🔥" },
+                { r: 5, name: "Onda di marea", pub: "OniLink", v: "Zoink", thumb: "thumb-tidal", icon: "🌊" },
+                { r: 6, name: "Green Bullet", pub: "Team", v: "Verifier", thumb: "thumb-amethyst", icon: "🟩" },
+                { r: 7, name: "ORBIT", pub: "MindCap", v: "Verifier", thumb: "thumb-thinking", icon: "🪐" },
+                { r: 8, name: "Antarctic Lights", pub: "declanlc", v: "Verifier", thumb: "thumb-society", icon: "❄️" },
+                { r: 9, name: "Nullscapes", pub: "Kiba", v: "Zoink", thumb: "thumb-dark", icon: "⬛" },
+                { r: 10, name: "Quanteuse processing", pub: "Renn241", v: "Zoink", thumb: "thumb-yellow", icon: "⚡" },
+                { r: 11, name: "BOOBAWAMBA", pub: "Akunakunn", v: "eastshark", thumb: "thumb-flamewall", icon: "👻" },
+                { r: 12, name: "The Bloop", pub: "Team", v: "Verifier", thumb: "thumb-society", icon: "💧" },
+                { r: 13, name: "Every End", pub: "MindCap", v: "Hqmy", thumb: "thumb-thinking", icon: "⏳" },
+                { r: 14, name: "Penumbral", pub: "cherryteam", v: "Verifier", thumb: "thumb-dark", icon: "🌑" },
+                { r: 15, name: "Silent clubstep", pub: "TheRealSailent", v: "zoe", thumb: "thumb-thinking", icon: "🤫" },
+                { r: 16, name: "Ashley Wave Trials", pub: "oddmod", v: "Verifier", thumb: "thumb-society", icon: "📐" },
+                { r: 17, name: "Ultra Paracosm", pub: "Team", v: "Verifier", thumb: "thumb-flamewall", icon: "🌀" },
+                { r: 18, name: "andromeda", pub: "Insxne97", v: "Taiago", thumb: "thumb-dark", icon: "🌌" },
+                { r: 19, name: "KILLSTEALER", pub: "Team", v: "Verifier", thumb: "thumb-flamewall", icon: "⚔️" },
+                { r: 20, name: "Subsuming Vortex", pub: "Cursed", v: "Verifier", thumb: "thumb-thinking", icon: "🌀" },
+                { r: 21, name: "Anathema", pub: "nikroplays", v: "Whizkid05", thumb: "thumb-society", icon: "🛡️" },
+                { r: 22, name: "Avernus", pub: "PockeWindfish", v: "Zoink", thumb: "thumb-flamewall", icon: "🌋" },
+                { r: 23, name: "Acheron", pub: "ryamu", v: "Zoink", thumb: "thumb-flamewall", icon: "💀" },
+                { r: 24, name: "Spectre", pub: "xander", v: "PersonHuman42", thumb: "thumb-society", icon: "👻" },
+                { r: 25, name: "Menace", pub: "Arraegen", v: "Whizkid05", thumb: "thumb-yellow", icon: "⚠️" },
+                { r: 26, name: "Abyss of Darkness", pub: "Exen", v: "Cursed", thumb: "thumb-thinking", icon: "🕳️" },
+                { r: 27, name: "Defeated Circles", pub: "Team", v: "Verifier", thumb: "thumb-flamewall", icon: "⭕" },
+                { r: 28, name: "FOREST OF SPIKES", pub: "bims", v: "Verifier", thumb: "thumb-dark", icon: "🌲" },
+                { r: 29, name: "Tunnel of Despair", pub: "Exen", v: "Zoink", thumb: "thumb-society", icon: "🚇" },
+                { r: 30, name: "Kyouki", pub: "出見塩", v: "出見塩", thumb: "thumb-flamewall", icon: "⛩️" },
+                { r: 31, name: "Based After Based", pub: "Akunakunn", v: "Verifier", thumb: "thumb-society", icon: "🔥" },
+                { r: 32, name: "The Lightning Rod", pub: "Lavatrex", v: "Lavatrex", thumb: "thumb-yellow", icon: "⚡" },
+                { r: 33, name: "Slaughterhouse", pub: "icedcave", v: "Doggie", thumb: "thumb-flamewall", icon: "🥩" },
+                { r: 34, name: "Subterminal Point", pub: "SyQual", v: "PoCle", thumb: "thumb-thinking", icon: "🎯" },
+                { r: 35, name: "KOCMOC", pub: "cherryteam", v: "Zoink", thumb: "thumb-society", icon: "🛰️" },
+                { r: 36, name: "cognitohazard", pub: "MercuryDT", v: "Verifier", thumb: "thumb-dark", icon: "☣️" },
+                { r: 37, name: "Maniacal Chains", pub: "LordDivinity", v: "Verifier", thumb: "thumb-flamewall", icon: "⛓️" },
+                { r: 38, name: "BEING HOME", pub: "Turtl123", v: "Verifier", thumb: "thumb-society", icon: "🏠" },
+                { r: 39, name: "Deimos", pub: "ItsHybrid", v: "Doggie", thumb: "thumb-thinking", icon: "☄️" },
+                { r: 40, name: "Sacrifice", pub: "Laniakea", v: "Verifier", thumb: "thumb-flamewall", icon: "🗡️" },
+                { r: 41, name: "CHIL", pub: "Team", v: "Verifier", thumb: "thumb-yellow", icon: "🧊" },
+                { r: 42, name: "zorin", pub: "태리", v: "Verifier", thumb: "thumb-society", icon: "🌀" },
+                { r: 43, name: "Sakupen Circles", pub: "Diamond", v: "Diamond", thumb: "thumb-flamewall", icon: "⭕" },
+                { r: 44, name: "The Salt Factory", pub: "Nickname09", v: "Verifier", thumb: "thumb-thinking", icon: "🧂" },
+                { r: 45, name: "Master of Puppets", pub: "TheZinkyYT", v: "Verifier", thumb: "thumb-dark", icon: "🎭" },
+                { r: 46, name: "Silentlocked", pub: "GDSkele", v: "Verifier", thumb: "thumb-flamewall", icon: "🔒" },
+                { r: 47, name: "Eyes in the Water", pub: "Hawkyre", v: "LordVadercraft", thumb: "thumb-society", icon: "👁️" },
+                { r: 48, name: "Voltage", pub: "ThePurgatory", v: "Verifier", thumb: "thumb-yellow", icon: "⚡" },
+                { r: 49, name: "KOSETSU", pub: "fwe", v: "Taiago", thumb: "thumb-thinking", icon: "❄️" },
+                { r: 50, name: "Through The Gates", pub: "TeamTheDashers", v: "Verifier", thumb: "thumb-flamewall", icon: "🚪" }
+            ];
+
+            demons.forEach(d => {
+                document.write(`
+                    <div class="demon-card">
+                        <div class="rank">#${d.r}</div>
+                        <div class="level-thumbnail ${d.thumb}">
+                            <div class="level-icon-badge">${d.icon}</div>
+                        </div>
+                        <div class="demon-info">
+                            <h3>${d.name}</h3>
+                            <p>Editore: <strong>${d.pub}</strong> | Verificatore: <strong>${d.v}</strong></p>
+                        </div>
+                    </div>
+                `);
+            });
+        </script>
+    </div>
+
+    <!-- 2. IMPOSSIBLE LIST (ILL - TOP 50) -->
+    <div id="ill-list" class="list-container">
+        <h2 class="section-title ill-title">Lista impossibile (Top 50)</h2>
+        <script>
+            const illDemons = [
+                { r: 1, name: "Ton 618", pub: "Thegda", status: "Solo bot / Impossibile" },
+                { r: 2, name: "Ciclociclico", pub: "Sary", status: "Fisicamente impossibile" },
+                { r: 3, name: "Balistico Malinconico", pub: "Otto", status: "Impossibile" },
+                { r: 4, name: "Nessus", pub: "Team Nessus", status: "Impossibile" },
+                { r: 5, name: "Regno Mortale", pub: "Exen", status: "Impossibile" },
+                { r: 6, name: "Silent Clubstep (versione non denotenziata)", pub: "Nailok", status: "Impossibile" },
+                { r: 7, name: "Slaughterhouse (versione non denotenziata)", pub: "icedcave", status: "Impossibile" },
+                { r: 8, name: "Depth of Bad", pub: "Creator", status: "Impossibile" },
+                { r: 9, name: "Null Zen", pub: "Team ILL", status: "Impossibile" },
+                { r: 10, name: "Acheron Extreme", pub: "Team", status: "Impossibile" },
+                { r: 11, name: "Sakupen Hell", pub: "KrazMan", status: "Impossibile" },
+                { r: 12, name: "Silent Circles", pub: "Sailent", status: "Impossibile" },
+                { r: 13, name: "Death Corridor", pub: "KrazMan", status: "Impossibile" },
+                { r: 14, name: "The Golden (Unnerfed)", pub: "Boogle", status: "Impossibile" },
+                { r: 15, name: "Visible Ray", pub: "Riot", status: "Impossibile" },
+                { r: 16, name: "Element 111 Rg", pub: "Censored", status: "Impossibile" },
+                { r: 17, name: "Hard Machine (Unnerfed)", pub: "Shadz", status: "Impossibile" },
+                { r: 18, name: "Tartarus (Unnerfed)", pub: "Dolphy", status: "Impossibile" },
+                { r: 19, name: "Thinking Space (Unnerfed)", pub: "Atomic", status: "Impossibile" },
+                { r: 20, name: "Bloodbath (Unnerfed)", pub: "Riot", status: "Impossibile" },
+                { r: 21, name: "Sonic Wave (Unnerfed)", pub: "Cyclic", status: "Impossibile" },
+                { r: 22, name: "The Hell Factory", pub: "Team", status: "Impossibile" },
+                { r: 23, name: "Crimson Planet (Unnerfed)", pub: "TrueChaos", status: "Impossibile" },
+                { r: 24, name: "Zodiac (Unnerfed)", pub: "PanMan", status: "Impossibile" },
+                { r: 25, name: "Firework (Unnerfed)", pub: "EndLevel", status: "Impossibile" },
+                { r: 26, name: "Kenos (Unnerfed)", pub: "Ryamu", status: "Impossibile" },
+                { r: 27, name: "Arcturus (Unnerfed)", pub: "MaxPain", status: "Impossibile" },
+                { r: 28, name: "Silent Club", pub: "Sailent", status: "Impossibile" },
+                { r: 29, name: "True Symphony", pub: "MindCap", status: "Impossibile" },
+                { r: 30, name: "Void", pub: "Exen", status: "Impossibile" },
+                { r: 31, name: "Abyss of Darkness (Unnerfed)", pub: "Exen", status: "Impossibile" },
+                { r: 32, name: "Avernus (Unnerfed)", pub: "PockeWindfish", status: "Impossibile" },
+                { r: 33, name: "Hard World", pub: "KrazMan", status: "Impossibile" },
+                { r: 34, name: "Silent Processing", pub: "Team", status: "Impossibile" },
+                { r: 35, name: "Final Destination", pub: "Creator", status: "Impossibile" },
+                { r: 36, name: "Terminal Velocity", pub: "Team", status: "Impossibile" },
+                { r: 37, name: "Absolute Zero", pub: "Creator", status: "Impossibile" },
+                { r: 38, name: "Hyper Sonic (Unnerfed)", pub: "Rustam", status: "Impossibile" },
+                { r: 39, name: "Plasma Pulse Finale (Unnerfed)", pub: "Smiley", status: "Impossibile" },
+                { r: 40, name: "Delta Interface (Unnerfed)", pub: "Subwoofer", status: "Impossibile" },
+                { r: 41, name: "Kowareta (Unnerfed)", pub: "Sark", status: "Impossibile" },
+                { r: 42, name: "Wasureta (Unnerfed)", pub: "Khaos", status: "Impossibile" },
+                { r: 43, name: "Omega Interface", pub: "Team", status: "Impossibile" },
+                { r: 44, name: "Quantum Processing", pub: "Creator", status: "Impossibile" },
+                { r: 45, name: "Void Chamber", pub: "Team", status: "Impossibile" },
+                { r: 46, name: "Singularity", pub: "Creator", status: "Impossibile" },
+                { r: 47, name: "Event Horizon", pub: "Team", status: "Impossibile" },
+                { r: 48, name: "Superluminal", pub: "Creator", status: "Impossibile" },
+                { r: 49, name: "Dark Odyssey (Unnerfed)", pub: "JonathanGD", status: "Impossibile" },
+                { r: 50, name: "Apocalypse", pub: "Team ILL", status: "Impossibile" }
+            ];
+
+            illDemons.forEach(d => {
+                document.write(`
+                    <div class="demon-card">
+                        <div class="rank ill-rank">#${d.r}</div>
+                        <div class="level-thumbnail thumb-ill">
+                            <div class="level-icon-badge">⛔</div>
+                        </div>
+                        <div class="demon-info">
+                            <h3>${d.name}</h3>
+                            <p>Editore: <strong>${d.pub}</strong> | Stato: <strong>${d.status}</strong></p>
+                        </div>
+                    </div>
+                `);
+            });
+        </script>
+    </div>
+
+    <!-- 3. PLAYER LIST (TOP 50) -->
+    <div id="player-list" class="list-container">
+        <h2 class="section-title">Classifica dei migliori giocatori (Top 50)</h2>
+        <script>
+            const players = [
+                { r: 1, name: "Zoink", nat: "USA", pts: "7.512 Punti", initials: "ZO" },
+                { r: 2, name: "wPopoff", nat: "USA", pts: "5.412 Punti", initials: "WP" },
+                { r: 3, name: "Netermind", nat: "RU", pts: "3.754 Punti", initials: "NE" },
+                { r: 4, name: "zLevii", nat: "RU", pts: "3.628 Punti", initials: "ZL" },
+                { r: 5, name: "Trucco", nat: "USA", pts: "3.597 Punti", initials: "TR" },
+                { r: 6, name: "Squalo", nat: "USA", pts: "2.520 Punti", initials: "SH" },
+                { r: 7, name: "Cloone", nat: "USA", pts: "2.463 Punti", initials: "KL" },
+                { r: 8, name: "Thnnder", nat: "UK", pts: "2.431 Punti", initials: "TH" },
+                { r: 9, name: "Eastshark", nat: "CN", pts: "2.403 Punti", initials: "ES" },
+                { r: 10, name: "Slaughter", nat: "FR", pts: "2.086 Punti", initials: "SL" },
+                { r: 11, name: "Cursed", nat: "USA", pts: "1.980 Punti", initials: "CU" },
+                { r: 12, name: "Exen", nat: "RU", pts: "1.850 Punti", initials: "EX" },
+                { r: 13, name: "Taiago", nat: "BR", pts: "1.750 Punti", initials: "TA" },
+                { r: 14, name: "Diamond", nat: "KR", pts: "1.650 Punti", initials: "DI" },
+                { r: 15, name: "Whizkid05", nat: "USA", pts: "1.550 Punti", initials: "WH" },
+                { r: 16, name: "Ryamu", nat: "USA", pts: "1.480 Punti", initials: "RY" },
+                { r: 17, name: "Wolvez", nat: "CA", pts: "1.420 Punti", initials: "WO" },
+                { r: 18, name: "Joaco", nat: "AR", pts: "1.350 Punti", initials: "JO" },
+                { r: 19, name: "Brian", nat: "USA", pts: "1.300 Punti", initials: "BR" },
+                { r: 20, name: "Lisp", nat: "SE", pts: "1.250 Punti", initials: "LI" },
+                { r: 21, name: "Dorami", nat: "CA", pts: "1.200 Punti", initials: "DO" },
+                { r: 22, name: "Doggie", nat: "USA", pts: "1.150 Punti", initials: "DG" },
+                { r: 23, name: "Knobbelboy", nat: "NL", pts: "1.100 Punti", initials: "KN" },
+                { r: 24, name: "Xanii", nat: "RU", pts: "1.050 Punti", initials: "XA" },
+                { r: 25, name: "GoodSmile", nat: "JP", pts: "1.000 Punti", initials: "GS" },
+                { r: 26, name: "MaxPain", nat: "DE", pts: "960 Punti", initials: "MP" },
+                { r: 27, name: "Pennutoh", nat: "IT", pts: "920 Punti", initials: "PE" },
+                { r: 28, name: "ItzElectrix", nat: "AU", pts: "880 Punti", initials: "IE" },
+                { r: 29, name: "Rlol", nat: "UK", pts: "850 Punti", initials: "RL" },
+                { r: 30, name: "Sryen", nat: "USA", pts: "820 Punti", initials: "SR" },
+                { r: 31, name: "EndLevel", nat: "DE", pts: "790 Punti", initials: "EL" },
+                { r: 32, name: "GD Cologne", nat: "CA", pts: "760 Punti", initials: "GC" },
+                { r: 33, name: "Popoff", nat: "USA", pts: "730 Punti", initials: "PP" },
+                { r: 34, name: "Larned", nat: "FR", pts: "700 Punti", initials: "LA" },
+                { r: 35, name: "KrazMan", nat: "USA", pts: "670 Punti", initials: "KM" },
+                { r: 36, name: "Zylenox", nat: "UK", pts: "640 Punti", initials: "ZY" },
+                { r: 37, name: "AeonAir", nat: "USA", pts: "610 Punti", initials: "AE" },
+                { r: 38, name: "Trusta", nat: "USA", pts: "590 Punti", initials: "TR" },
+                { r: 39, name: "Technical", nat: "USA", pts: "570 Punti", initials: "TE" },
+                { r: 40, name: "Cyclic", nat: "USA", pts: "550 Punti", initials: "CY" },
+                { r: 41, name: "MetalFace221", nat: "UK", pts: "530 Punti", initials: "MF" },
+                { r: 42, name: "Subwoofer", nat: "USA", pts: "510 Punti", initials: "SW" },
+                { r: 43, name: "Partition", nat: "CA", pts: "490 Punti", initials: "PA" },
+                { r: 44, name: "Serponge", nat: "FR", pts: "470 Punti", initials: "SP" },
+                { r: 45, name: "Spify", nat: "USA", pts: "450 Punti", initials: "SF" },
+                { r: 46, name: "TseLuk", nat: "HK", pts: "430 Punti", initials: "TL" },
+                { r: 47, name: "RobTop", nat: "SE", pts: "410 Punti", initials: "RT" },
+                { r: 48, name: "Andromeda", nat: "RU", pts: "390 Punti", initials: "AN" },
+                { r: 49, name: "Mefewe", nat: "KR", pts: "370 Punti", initials: "ME" },
+                { r: 50, name: "Riot", nat: "USA", pts: "350 Punti", initials: "RI" }
+            ];
+
+            players.forEach(p => {
+                document.write(`
+                    <div class="player-card">
+                        <div class="player-left">
+                            <div class="rank" style="width: auto; margin-right: 15px;">#${p.r}</div>
+                            <div class="player-avatar-box">${p.initials}</div>
+                            <div>
+                                <h3>${p.name}</h3>
+                                <p style="color: var(--text-muted); font-size: 0.9rem;">Nazionalità: ${p.nat}</p>
+                            </div>
+                        </div>
+                        <div class="player-points">${p.pts}</div>
+                    </div>
+                `);
+            });
+        </script>
+    </div>
+
+    <script>
+        function showTab(tabId) {
+            const containers = document.querySelectorAll('.list-container');
+            containers.forEach(c => c.classList.remove('active'));
+
+            const buttons = document.querySelectorAll('nav button');
+            buttons.forEach(b => b.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+    </script>
+
+</body>
+</html>
